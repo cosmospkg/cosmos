@@ -135,36 +135,59 @@ impl Galaxy {
         let stars_path = galaxy_path.join("stars");
         let mut stars = HashMap::new();
 
-        for entry in fs::read_dir(&stars_path)? {
-            let entry = entry?;
-            let path = entry.path();
-
-            if path.extension().and_then(|e| e.to_str()) == Some("toml") {
-                let content = fs::read_to_string(&path)?;
-                match toml::from_str::<Star>(&content) {
-                    Ok(star) => {
-                        if let Some(declared) = &meta.stars {
-                            if let Some(expected_ver) = declared.get(&star.name) {
-                                if &star.version != expected_ver {
-                                    eprintln!(
-                                        "⚠️  Version mismatch: {} expected {}, got {}",
-                                        star.name, expected_ver, star.version
-                                    );
-                                    continue;
-                                }
+        // fill stars with meta.stars first
+        if let Some(declared) = &meta.stars {
+            for (name, version) in declared.iter() {
+                let star_path = stars_path.join(format!("{}.toml", name));
+                if star_path.exists() {
+                    let content = fs::read_to_string(&star_path)?;
+                    match toml::from_str::<Star>(&content) {
+                        Ok(star) => {
+                            if &star.version == version {
+                                stars.insert(star.name.clone(), star);
+                            } else {
+                                eprintln!(
+                                    "⚠️  Version mismatch: {} expected {}, got {}",
+                                    name, version, star.version
+                                );
                             }
                         }
-                        stars.insert(star.name.clone(), star);
+                        Err(err) => {
+                            eprintln!("❌ Could not parse star file '{}': {}", star_path.display(), err);
+                        }
                     }
-                    Err(err) => {
-                        eprintln!("❌ Could not parse star file '{}': {}", path.display(), err);
-                        continue;
+                } else {
+                    // we need to download the star file from remote
+                    if let Some(url) = &url {
+                        let star_url = format!("{}/stars/{}.toml", url.trim_end_matches('/'), name);
+                        let star_dest = stars_path.join(format!("{}.toml", name));
+                        Self::download_file(&star_url, &star_dest)?;
+                        let content = fs::read_to_string(&star_dest)?;
+                        match toml::from_str::<Star>(&content) {
+                            Ok(star) => {
+                                if &star.version == version {
+                                    stars.insert(star.name.clone(), star);
+                                } else {
+                                    eprintln!(
+                                        "⚠️  Version mismatch: {} expected {}, got {}",
+                                        name, version, star.version
+                                    );
+                                }
+                            }
+                            Err(err) => {
+                                eprintln!("❌ Could not parse downloaded star file '{}': {}", star_dest.display(), err);
+                            }
+                        }
                     }
                 }
             }
         }
 
-        Ok(Galaxy { name, url, stars })
+        Ok(Galaxy {
+            name,
+            url,
+            stars,
+        })
     }
 
     pub fn sync_all_from_config(config: &Config, level: SyncLevel) -> Result<(), GalaxyError> {
@@ -234,11 +257,9 @@ impl Galaxy {
                         let filename = format!("{}-{}.tar.gz", star.name, star.version);
                         let tar_dest = packages_dir.join(filename);
                         Self::download_file(source, &tar_dest)?;
-                    }
-                    else if source.starts_with("file://") || Path::new(source).exists() {
+                    } else if source.starts_with("file://") || Path::new(source).exists() {
                         println!("⭐ Local source detected for star '{}'", star.name);
-                    }
-                    else {
+                    } else {
                         eprintln!("⚠️  Unsupported source format for star '{}'", star.name);
                     }
                 }
