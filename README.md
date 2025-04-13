@@ -68,7 +68,7 @@ stellar build-star ./hello
 
 ---
 
-## 🗈️ In Action
+## 🖼️ In Action
 
 ![screenshot of cosmos installing packages with cosmic flair](./assets/in-action.png)
 
