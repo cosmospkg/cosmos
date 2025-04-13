@@ -1,0 +1,58 @@
+name: Release Tools (musl + glibc)
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # e.g. v1.0.0
+
+jobs:
+  release:
+    name: Build & Release
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          - x86_64-unknown-linux-musl
+          - x86_64-unknown-linux-gnu
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install Rust target
+        run: rustup target add ${{ matrix.target }}
+
+      - name: Install musl tools
+        if: matrix.target == 'x86_64-unknown-linux-musl'
+        run: sudo apt-get update && sudo apt-get install -y musl-tools
+
+      - name: Build cosmos-cli
+        env:
+          RUSTFLAGS: "-C target-feature=+crt-static"
+        run: cargo build --release --package cosmos-cli --target ${{ matrix.target }}
+
+      - name: Build stellar
+        env:
+          RUSTFLAGS: "-C target-feature=+crt-static"
+        run: cargo build --release --package stellar --target ${{ matrix.target }}
+
+      - name: Create release artifacts
+        run: |
+          mkdir -p dist
+          cp target/${{ matrix.target }}/release/cosmos-cli dist/cosmos-cli-${{ matrix.target }}
+          cp target/${{ matrix.target }}/release/stellar dist/stellar-${{ matrix.target }}
+          strip dist/cosmos-cli-${{ matrix.target }} || true
+          strip dist/stellar-${{ matrix.target }} || true
+          cd dist
+          tar -czf cosmos-cli-${{ matrix.target }}.tar.gz cosmos-cli-${{ matrix.target }}
+          tar -czf stellar-${{ matrix.target }}.tar.gz stellar-${{ matrix.target }}
+
+      - name: Upload artifacts to GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: "Cosmos ${{ github.ref_name }}"
+          tag_name: ${{ github.ref_name }}
+          body: "Auto-generated release for ${{ matrix.target }}"
+          files: dist/*.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}

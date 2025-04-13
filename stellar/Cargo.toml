@@ -1,0 +1,27 @@
+[package]
+name = "stellar"
+version = "1.0.0-rc"
+edition = "2021"
+publish = false
+
+[profile.release]
+opt-level = "z"
+lto = true
+panic = "abort"
+strip = true
+
+[dependencies]
+clap = { version = "4.4.11", features = ["derive", "string", "env"] }
+serde = { version = "1.0.193", features = ["derive"] }
+cosmos-core = { path = "../cosmos-core" }
+dialoguer = "0.11.0"
+toml = "0.8.20"
+tar = "0.4.40"
+flate2 = "1.1.0"
+tempfile = "3.19.1"
+fs_extra = "1.3.0"
+nova = { path = "../nova" }
+ureq = { version = "2", default-features = false }
+semver = "1.0.26"
+cosmos-transport = { path = "../cosmos-transport" }
+chrono = "0.4.40"

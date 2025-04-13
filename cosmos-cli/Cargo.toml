@@ -1,0 +1,16 @@
+[package]
+name = "cosmos-cli"
+version = "1.0.0-rc"
+edition = "2021"
+publish = false
+
+[profile.release]
+opt-level = "z"
+lto = true
+panic = "abort"
+strip = true
+
+[dependencies]
+clap = { version = "4.4.11", features = ["derive", "string", "env"] }
+cosmos-core = { path = "../cosmos-core" }
+cosmos-universe = { path = "../cosmos-universe" }

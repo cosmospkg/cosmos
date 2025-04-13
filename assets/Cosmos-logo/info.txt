@@ -1,0 +1,14 @@
+
+Hope you enjoy your new logo, here are the people that
+made your beautiful logo happen :)
+font name: sen-regular
+font link: http://www.philatype.com/#sen
+font author: Philatype
+font author site: http://www.philatype.com/
+
+
+icon designer: Focus Lab
+icon designer link: /focuslab
+        
+{"bg":"transparent","icon-gradient-0":"#4B279B","icon-gradient-1":"#DF99D8","font":"#000000","slogan":"#141414"}
+      

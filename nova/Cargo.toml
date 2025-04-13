@@ -1,0 +1,11 @@
+[package]
+name = "nova"
+version = "1.0.0-rc"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ['rlib']
+
+[dependencies]
+mlua = { version = "0.10.3", features = ["lua54", "vendored"] }

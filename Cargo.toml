@@ -1,0 +1,9 @@
+[workspace]
+resolver = "2"
+members = [
+    "cosmos-core",
+    "cosmos-cli",
+    "stellar",
+    "nova",
+    "cosmos-universe"
+, "cosmos-transport"]

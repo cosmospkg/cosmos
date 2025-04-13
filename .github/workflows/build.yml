@@ -1,0 +1,61 @@
+name: Build Cosmos (musl + glibc)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build Workspace
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          - x86_64-unknown-linux-musl
+          - x86_64-unknown-linux-gnu
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install Rust target
+        run: rustup target add ${{ matrix.target }}
+
+      - name: Install musl tools (if needed)
+        if: matrix.target == 'x86_64-unknown-linux-musl'
+        run: sudo apt-get update && sudo apt-get install -y musl-tools
+
+      - name: Cache cargo build artifacts
+        uses: actions/cache@v3
+        with:
+          path: |
+            target
+            ~/.cargo/registry
+            ~/.cargo/git
+          key: ${{ runner.os }}-cargo-${{ matrix.target }}-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-${{ matrix.target }}-
+
+      - name: Build workspace for ${{ matrix.target }}
+        env:
+          RUSTFLAGS: "-C target-feature=+crt-static"
+        run: cargo build --workspace --release --target ${{ matrix.target }}
+
+      - name: Prepare artifacts
+        run: |
+          mkdir -p upload/${{ matrix.target }}
+          find target/${{ matrix.target }}/release -maxdepth 1 -type f -executable \
+            -exec cp {} upload/${{ matrix.target }}/ \;
+
+      - name: Strip binaries
+        run: |
+          sudo apt-get update && sudo apt-get install -y binutils
+          find upload/${{ matrix.target }} -type f -executable -exec strip {} +
+
+      - name: Upload built binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: cosmos-${{ matrix.target }}-binaries
+          path: upload/${{ matrix.target }}/
