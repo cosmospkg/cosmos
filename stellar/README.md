@@ -19,14 +19,14 @@ Stellar is a CLI tool for maintainers and packagers. It handles scaffolding, bui
 
 ## 🛠️ Commands
 
-| Command                    | Purpose                                      |
+| Command                   | Purpose                                      |
 |---------------------------|----------------------------------------------|
 | `new-star <name>`         | Scaffold a new Star package                  |
 | `build-star <path>`       | Build `.tar.gz` from `files/` + metadata     |
 | `fetch <path>`            | Download remote source archive               |
 | `validate <path>`         | Verify Star metadata and script              |
 | `galaxy-init <name>`      | Create an empty Galaxy repo structure        |
-| `index-galaxy <path>`     | *(future)* Auto-populate `meta.toml` entries |
+| `index-galaxy <path>`     | Auto-populate `meta.toml` entries            |
 | `lint <path>`             | *(future)* Style and structure suggestions   |
 
 ---
