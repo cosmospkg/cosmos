@@ -126,7 +126,7 @@ You can help by:
 - Improving Stellar or Nova
 - Proposing new commands or safety features
 
-Start here: [Contribution Guide](https://github.com/cosmospkg/cosmos-docs/tree/main/docs/18-Cosmos-Contribution.md)
+Start here: [Contribution Guide](https://github.com/cosmospkg/cosmos-docs/tree/main/docs/20-Cosmos-Contribution.md)
 
 ---
 
