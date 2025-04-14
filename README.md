@@ -1,6 +1,6 @@
 # 🌌 Cosmos
 
-> The package manager for when your distribution is on fire.
+> The package manager for when your distribution is on fire—or just extremely minimal.
 
 **Cosmos is a minimal, musl-friendly, static-binary-only package manager for people who want to build, install, and repair Linux systems with zero runtime dependencies and zero patience for bloat.**
 
@@ -13,6 +13,7 @@ Cosmos is a statically linked, offline-friendly, interpreter-free package manage
 - Bootstrapping systems from scratch
 - Initramfs, embedded, and recovery environments
 - Fully custom distros (like Wombat Linux)
+- Minimal or purpose-built Linux deployments
 - Developers who want reproducible installs without shell drama
 
 - **Galaxy**: A repository of packages
@@ -27,9 +28,9 @@ Cosmos is a statically linked, offline-friendly, interpreter-free package manage
 
 Because sometimes you don’t want a package manager. You want a surgical tool.
 
-- Offline, static, zero-runtime package installs
+- Static, small, zero-runtime package installs
 - No shell dependencies or dynamic linking
-- Built for bootstrapping, initramfs, or minimal distros
+- Built for bootstrapping, initramfs, embedded, or minimal distros
 
 See the [Design Rationale](https://github.com/cosmospkg/cosmos-docs/blob/main/docs/14-Design-Rationale.md) for more philosophy and tech comparisons.
 
@@ -90,7 +91,9 @@ Includes:
 
 ## 💥 When to Use Cosmos
 
-Cosmos isn’t here to replace Apt, Pacman, or Nix—it’s for when they’re down, broken, or overkill.  
+Cosmos isn’t here to replace Apt, Pacman, or Nix—it’s for when they’re down, broken, overkill, or not even possible.
+Perfect for embedded systems, recovery environments, custom initramfs, and everything in between.
+
 See the [Design Rationale](https://github.com/cosmospkg/cosmos-docs/blob/main/docs/14-Design-Rationale.md) for comparisons and guiding principles.
 
 ---
@@ -130,15 +133,15 @@ Start here: [Contribution Guide](https://github.com/cosmospkg/cosmos-docs/tree/m
 
 ---
 
-## 🎐 License
+## 🏮 License
 
 MIT. No contributor agreement. No drama.
 
-## 💭 Philosophy
-Cosmos exists for the systems no one else wants to deal with. It’s for the broken, the weird, the bare-metal and 
-burnt-out. Where other package managers assume DNS resolution, working SSL, a functioning shell, and five runtime 
-daemons, Cosmos assumes a USB stick and sheer force of will. It doesn't aim to be elegant or extensible—it aims to work, 
-when and where nothing else does. If you’ve ever fixed a system by hand-editing `/etc`, this is your vibe.
+## 🚭 Philosophy
+Cosmos exists for the systems no one else wants to deal with. It’s for the broken, the weird, the embedded, and the intentionally small. Where other package managers assume DNS resolution, working SSL, a functioning shell, and five runtime daemons, Cosmos assumes a USB stick and sheer force of will. It doesn't aim to be elegant or extensible—it aims to work, when and where nothing else does.
+
+If you’ve ever fixed a system by hand-editing `/etc`, this is your vibe.
 
 > Cosmos is not for everyone.  
-> It’s for people who fix their systems with tarballs and spite.
+> It’s for people who fix their systems with tarballs and spite—or build systems that never needed help to begin with.
+
