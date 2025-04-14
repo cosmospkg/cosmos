@@ -71,7 +71,7 @@ Reduces size by ~30-40% with no loss in functionality.
 
 ---
 
-### Optional: Copy it into your path:
+## 💾 Optional: Copy it into your path:
 ```bash
 cp target/x86_64-unknown-linux-musl/release/cosmos-cli /usr/local/bin/cosmos
 ```
