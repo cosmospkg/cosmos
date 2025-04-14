@@ -1,5 +1,7 @@
 # Building Cosmos
 
+> Want a prebuilt binary instead? Check out the [Latest Release](https://github.com/cosmospkg/cosmos/releases/latest)
+
 Cosmos is a static, offline-first package manager written in Rust. You can build it on any platform that supports Rust, but we recommend targeting **musl** for true static binaries.
 
 ---
@@ -20,8 +22,8 @@ Cosmos is a static, offline-first package manager written in Rust. You can build
 cargo build --release
 ```
 
-- This links dynamically to `libm.so.6` and `libc.so.6`
-- ✅ Works fine on all glibc-based Linux distros
+- Links dynamically to glibc libraries (`libm.so.6`, `libc.so.6`, `libgcc`)
+- ✅ Works on most mainstream Linux distros
 - ❌ Not portable to Alpine (musl)
 
 ### ✅ Static Build (recommended for releases)
@@ -31,65 +33,72 @@ RUSTFLAGS="-C target-feature=+crt-static" \
 cargo build --release --target x86_64-unknown-linux-musl
 ```
 
-- ✅ No `libm`, `libc`, or `ld-linux`
-- ✅ Ideal for initramfs, Docker, chroots
-- ✅ Works with Alpine Linux and embedded systems
-- Output will be in:
-```
-target/x86_64-unknown-linux-musl/release/cosmos-cli
-```
+- ✅ No glibc (`libm`, `libc`, `libgcc`) or `ld-linux` dependency
+- ✅ Works with Alpine Linux, initramfs, Docker, embedded systems
+- - Output binary: `target/x86_64-unknown-linux-musl/release/cosmos-cli`
 
 ---
 
-## 🔍 Testing Build Purity
+## 🔍 Verifying Static Build
 
 ### Check for dynamic dependencies:
 ```bash
-ldd target/release/cosmos-cli
+ldd target/x86_64-unknown-linux-musl/release/cosmos-cli
 ```
-If static:
-```
-not a dynamic executable
+Expect something like:
+```text
+/lib/ld-musl-x86_64.so.1 (0x7f...)  # musl loader only
 ```
 
-### Inspect symbols:
+### Inspect binary type:
 ```bash
-file target/release/cosmos-cli
+file target/x86_64-unknown-linux-musl/release/cosmos-cli
 ```
-Should show `statically linked` if built with musl.
+Expect output:
+```text
+ELF 64-bit LSB pie executable, x86-64, statically linked
+```
+
+Note: musl-based binaries *do* show a dynamic loader path (`ld-musl-x86_64.so.1`), but are still statically linked. This is normal.
 
 ---
 
-## 🧼 Optional Strip
+## 🧼 Optional: Strip Binary
 ```bash
-strip target/.../cosmos-cli
+strip target/x86_64-unknown-linux-musl/release/cosmos-cli
 ```
-Can reduce binary size by ~30-40%.
+Reduces size by ~30-40% with no loss in functionality.
+
+---
+
+### Optional: Copy it into your path:
+```bash
+cp target/x86_64-unknown-linux-musl/release/cosmos-cli /usr/local/bin/cosmos
+```
 
 ---
 
 ## 🔔 Note on `libm.so.6`
 
-If you're building for **glibc**, you will see:
+If you're building for **glibc**, you may see:
 ```text
 /usr/lib/libm.so.6 (compatibility version 6.0.0)
 ```
-
-This is normal and expected — the math library is required for some crates (`flate2`, `miniz_oxide`, etc.).
-
-To fully avoid it, use **musl + static linking** as shown above.
+This is expected — `libm` is pulled in by crates like `flate2` or `miniz_oxide`.
+To avoid this, build with **musl** as shown above.
 
 ---
 
 ## 🧪 Dev Testing Nova
 
-Nova scripts are vendored and statically linked. You do **not** need Lua installed to build Cosmos.
+Nova scripts are statically linked into the Cosmos binary. Lua is not required at runtime.
 
-If you want to test Nova scripts independently:
+To test Nova scripts during development:
 ```bash
 cargo run --package cosmos-cli -- install zlib --root ./testroot
 ```
 
 ---
 
-Cosmos builds fast, links clean, and works anywhere you need to boot from a stick. 💿
+Cosmos builds fast, links clean, and works anywhere you need to boot from a stick. 📏
+
