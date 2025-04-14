@@ -91,7 +91,7 @@ impl Galaxy {
         self.stars.contains_key(name)
     }
 
-    pub fn load_all_from_config(config: &Config) -> Result<Vec<Galaxy>, GalaxyError> {
+    pub fn load_all_from_config(config: &Config, offline: bool) -> Result<Vec<Galaxy>, GalaxyError> {
         let mut galaxies = vec![];
 
         for (name, url) in &config.galaxies {
@@ -102,13 +102,13 @@ impl Galaxy {
                 }
 
                 let path = Path::new(&url);
-                let galaxy = Galaxy::load(path, Some(url.clone()))?;
+                let galaxy = Galaxy::load(path, Some(url.clone()), offline)?;
                 galaxies.push(galaxy);
             } else {
                 let galaxy_cache_path = Path::new(&config.cache_dir).join("galaxies").join(name);
 
                 if galaxy_cache_path.exists() {
-                    let galaxy = Galaxy::load(&galaxy_cache_path, Some(url.clone()))?;
+                    let galaxy = Galaxy::load(&galaxy_cache_path, Some(url.clone()), offline)?;
                     galaxies.push(galaxy);
                 } else {
                     eprintln!(
@@ -122,7 +122,7 @@ impl Galaxy {
         Ok(galaxies)
     }
 
-    pub fn load(galaxy_path: &Path, url: Option<String>) -> Result<Galaxy, GalaxyError> {
+    pub fn load(galaxy_path: &Path, url: Option<String>, offline: bool) -> Result<Galaxy, GalaxyError> {
         let name = galaxy_path.file_name()
             .and_then(|n| n.to_str())
             .ok_or_else(|| std::io::Error::new(std::io::ErrorKind::Other, "Invalid galaxy folder name"))?
@@ -156,7 +156,7 @@ impl Galaxy {
                             eprintln!("❌ Could not parse star file '{}': {}", star_path.display(), err);
                         }
                     }
-                } else {
+                } else if !offline {
                     // we need to download the star file from remote
                     if let Some(url) = &url {
                         let star_url = format!("{}/stars/{}.toml", url.trim_end_matches('/'), name);
@@ -179,6 +179,9 @@ impl Galaxy {
                             }
                         }
                     }
+                } else {
+                    eprintln!("⚠️ Star file for '{}' not found in offline mode ({}). Did you forget to run `cosmos sync --stars`?", name, meta.name);
+
                 }
             }
         }

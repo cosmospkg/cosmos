@@ -107,7 +107,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 config.install_dir = root_override.clone();
                 universe = Universe::load(&format!("{}/var/lib/cosmos/universe.toml", root_override))?;
             }
-            let galaxies = cosmos_core::galaxy::Galaxy::load_all_from_config(&config)?;
+            let galaxies = cosmos_core::galaxy::Galaxy::load_all_from_config(&config, offline)?;
 
             if let Some(path) = constellation {
                 let constellation = cosmos_core::constellation::Constellation::from_file(&path)?;
@@ -180,7 +180,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         Commands::Show { name } => {
             let config = Config::from_file("/etc/cosmos/config.toml")?;
-            let galaxies = Galaxy::load_all_from_config(&config)?;
+            let galaxies = Galaxy::load_all_from_config(&config, false)?;
             let (star_meta, galaxy) = resolver::find_star(&galaxies, &name, "*")
                 .ok_or_else(|| format!("❌ Star '{}' not found in any Galaxy", name))?;
 
@@ -206,7 +206,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         Commands::Search { term } => {
             let config = Config::from_file("/etc/cosmos/config.toml")?;
-            let galaxies = Galaxy::load_all_from_config(&config)?;
+            let galaxies = Galaxy::load_all_from_config(&config, false)?;
 
             println!("🔍 Search results for '{}':", term);
             for galaxy in galaxies {
@@ -260,7 +260,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 universe = Universe::load(&format!("{}/var/lib/cosmos/universe.toml", root_override))?;
             }
 
-            let galaxies = Galaxy::load_all_from_config(&config)?;
+            let galaxies = Galaxy::load_all_from_config(&config, offline)?;
             let (latest_star, galaxy) = resolver::find_star(&galaxies, &name, "*")
                 .ok_or_else(|| format!("❌ Star '{}' not found in any Galaxy", name))?;
 
