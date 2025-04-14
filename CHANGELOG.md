@@ -8,3 +8,4 @@
 - Offline install support (offline-first design)
 - Modular transport layer added
 - Fixed: `star.toml` wouldn’t download on metadata-only sync
+- Fixed: Galaxy cache loading now downloads missing star metadata unless `--offline` is used

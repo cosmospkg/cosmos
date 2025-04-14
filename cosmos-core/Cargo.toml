@@ -10,6 +10,7 @@ crate-type = ['rlib']
 [features]
 default = []  # No default features
 transport-https = ["cosmos-transport/https"]
+ffi = []
 
 [dependencies]
 serde = { version = "1.0.193", features = ["derive"] }
@@ -23,6 +24,4 @@ semver = { version = "1.0.26", features = ["serde"] }
 thiserror = "1.0"
 tempfile = "3.19.1"
 fs_extra = "1.3.0"
-
-# cosmos-transport with its *default features* (i.e., `http`)
 cosmos-transport = { path = "../cosmos-transport", default-features = true, optional = false }
