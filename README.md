@@ -137,11 +137,11 @@ Start here: [Contribution Guide](https://github.com/cosmospkg/cosmos-docs/tree/m
 
 MIT. No contributor agreement. No drama.
 
-## 🚭 Philosophy
+## 🚭️ Philosophy
 Cosmos exists for the systems no one else wants to deal with. It’s for the broken, the weird, the embedded, and the intentionally small. Where other package managers assume DNS resolution, working SSL, a functioning shell, and five runtime daemons, Cosmos assumes a USB stick and sheer force of will. It doesn't aim to be elegant or extensible—it aims to work, when and where nothing else does.
 
 If you’ve ever fixed a system by hand-editing `/etc`, this is your vibe.
 
 > Cosmos is not for everyone.  
 > It’s for people who fix their systems with tarballs and spite—or build systems that never needed help to begin with.
-
+> 
