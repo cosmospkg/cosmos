@@ -10,7 +10,7 @@ use fs_extra::copy_items;
 use tempfile::tempdir;
 use fs_extra::dir::CopyOptions;
 use cosmos_core::star::Star;
-use dialoguer::{Input, Select};
+use dialoguer::{Input};
 use cosmos_core::resolver::calculate_checksum;
 
 pub fn build_star(path: &str) -> Result<(), Box<dyn std::error::Error>> {
@@ -87,6 +87,12 @@ pub fn build_star(path: &str) -> Result<(), Box<dyn std::error::Error>> {
         opts.overwrite = true;
 
         copy_items(&entries, staging, &opts)?;
+    }
+
+    // if the user wants to include checksums, save them to star.toml
+    if include_checksum {
+        let checksum_str = toml::to_string_pretty(&star)?;
+        fs::write(star_path, checksum_str)?;
     }
 
     if install_lua.exists() {
