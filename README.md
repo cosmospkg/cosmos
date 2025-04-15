@@ -142,6 +142,9 @@ Cosmos exists for the systems no one else wants to deal with. It’s for the bro
 
 If you’ve ever fixed a system by hand-editing `/etc`, this is your vibe.
 
+# 🫂 Support
+- [Ko-Fi](https://ko-fi.com/afroraydude)
+
 > Cosmos is not for everyone.  
 > It’s for people who fix their systems with tarballs and spite—or build systems that never needed help to begin with.
 > 

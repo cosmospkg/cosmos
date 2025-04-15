@@ -78,7 +78,7 @@ cargo test -p stellar
 
 ## 🔗 Project
 - [Main Cosmos Repo](https://github.com/cosmospkg/cosmos)
-- [Documentation](https://docs.cosmos-pkg.org/stellar)
+- [Documentation](https://docs.cosmos-pkg.org/09-Tooling/)
 
 ---
 
