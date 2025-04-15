@@ -33,6 +33,12 @@ pub enum CosmosError {
 
     #[error("Checksum validation failed: {0}")]
     ChecksumFailed(String),
+
+    #[error("Security error: {0}")]
+    SecurityError(String),
+
+    #[error("Invalid checksum: {0}")]
+    InvalidChecksum(String),
 }
 
 impl From<NovaError> for CosmosError {

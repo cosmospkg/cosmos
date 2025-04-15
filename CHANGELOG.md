@@ -1,5 +1,8 @@
 # Changelog
 
+# [v1.0.0-rc3] – 2025-04-16
+- Checksum verification for extracted files
+
 ## [v1.0.0-rc2] – 2025-04-15
 - Transport layer updated to `v1.0.0`
 - Transport layer modules separated by protocol
