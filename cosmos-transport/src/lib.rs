@@ -1,3 +1,5 @@
+mod http;
+
 use thiserror::Error;
 use std::io::Read;
 
@@ -28,19 +30,12 @@ pub fn fetch_bytes(url: &str) -> Result<Vec<u8>, TransportError> {
         return Err(TransportError::UnsupportedUrlScheme(url.to_string()));
     }
 
-    let response = ureq::get(&url).call()
-        .map_err(|e| TransportError::DownloadFailed(format!("{}: {}", url, e)))?;
-
-    if response.status() != 200 {
-        Err(TransportError::DownloadFailed(format!(
-            "Failed to fetch URL: {} (status: {})",
-            url, response.status()
-        )))?;
-    }
-
-    let bytes = response.into_reader().bytes()
-        .collect::<Result<Vec<_>, _>>()
-        .map_err(|e| TransportError::DownloadFailed(format!("Failed to read response: {}", e)))?;
+    let protocol = url.split("://").next().unwrap_or("");
+    let bytes = match protocol {
+        "http" => http::pull(url),
+        "https" => http::pull(url),
+        _ => return Err(TransportError::UnsupportedUrlScheme(url.to_string())),
+    };
 
     Ok(bytes)
 }
