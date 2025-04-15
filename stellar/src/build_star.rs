@@ -72,6 +72,10 @@ pub fn build_star(path: &str) -> Result<(), Box<dyn std::error::Error>> {
         if include_checksum {
             for entry in &entries {
                 let relative_path = entry.strip_prefix(&files_dir).unwrap();
+                // if it a directory, skip it
+                if entry.is_dir() {
+                    continue;
+                }
                 let checksum = calculate_checksum(entry)?;
                 checksums.insert(relative_path.to_string_lossy().to_string(), checksum);
             }

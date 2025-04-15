@@ -37,6 +37,14 @@ pub fn calculate_checksum(file_path: &Path) -> Result<String, std::io::Error> {
     use std::fs::File;
     use std::io::{BufReader, Read};
 
+    // if it is a directory, error
+    if file_path.is_dir() {
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::InvalidInput,
+            "Provided path is a directory, not a file",
+        ));
+    }
+
     let file = File::open(file_path)?;
     let mut reader = BufReader::new(file);
     let mut hasher = Sha256::new();
