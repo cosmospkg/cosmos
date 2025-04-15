@@ -19,3 +19,4 @@ ureq = { version = "2", default-features = false }
 semver = "1.0.26"
 cosmos-transport = { path = "../cosmos-transport" }
 chrono = "0.4.40"
+walkdir = "2.5.0"

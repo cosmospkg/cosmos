@@ -70,14 +70,12 @@ pub fn build_star(path: &str) -> Result<(), Box<dyn std::error::Error>> {
             .collect::<Result<Vec<_>, std::io::Error>>()?;
 
         if include_checksum {
-            for entry in &entries {
-                let relative_path = entry.strip_prefix(&files_dir).unwrap();
-                // if it a directory, skip it
-                if entry.is_dir() {
-                    continue;
+            for entry in walkdir::WalkDir::new(&files_dir).into_iter().filter_map(|e| e.ok()) {
+                let relative_path = entry.path().strip_prefix(&files_dir).unwrap();
+                if entry.file_type().is_file() {
+                    let checksum = calculate_checksum(entry.path())?;
+                    checksums.insert(relative_path.to_string_lossy().to_string(), checksum);
                 }
-                let checksum = calculate_checksum(entry)?;
-                checksums.insert(relative_path.to_string_lossy().to_string(), checksum);
             }
             star.checksums = Some(checksums);
         }
@@ -87,12 +85,6 @@ pub fn build_star(path: &str) -> Result<(), Box<dyn std::error::Error>> {
         opts.overwrite = true;
 
         copy_items(&entries, staging, &opts)?;
-    }
-
-    // if the user wants to include checksums, save them to star.toml
-    if include_checksum {
-        let checksum_str = toml::to_string_pretty(&star)?;
-        fs::write(star_path, checksum_str)?;
     }
 
     if install_lua.exists() {
@@ -112,6 +104,12 @@ pub fn build_star(path: &str) -> Result<(), Box<dyn std::error::Error>> {
     let mut tar = Builder::new(enc);
     tar.append_dir_all(".", staging)?;
     tar.finish()?;
+    // if the user wants to include checksums, save them to star.toml
+    if include_checksum {
+        let checksum_str = toml::to_string_pretty(&star)?;
+        // save to the dist directory as {star.name}.toml
+        fs::write(format!("dist/{}.toml", star.name), checksum_str)?;
+    }
 
     println!("✅ Successfully built star package: {}", tar_path);
     Ok(())
