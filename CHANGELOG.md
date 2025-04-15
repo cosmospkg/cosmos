@@ -5,6 +5,7 @@
 - Transport layer modules separated by protocol
 - Better error handling for missing files in the CLI
 - Added help text for `cosmos-cli` and `stellar` commands
+- Hopefully fix static linking issues on `musl` systems
 
 ## [v1.0.0-rc] – 2025-04-13
 - Initial public release candidate
