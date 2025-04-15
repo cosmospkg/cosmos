@@ -32,6 +32,7 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
+    /// Install a star or constellation
     Install {
         #[arg(conflicts_with = "constellation")]
         name: Option<String>,
@@ -46,6 +47,7 @@ enum Commands {
         root: Option<String>,
     },
 
+    /// Uninstall a star
     Uninstall {
         name: String,
 
@@ -53,6 +55,7 @@ enum Commands {
         root: Option<String>,
     },
 
+    /// Update a star
     Update {
         name: String,
 
@@ -63,8 +66,10 @@ enum Commands {
         root: Option<String>,
     },
 
+    /// Show the status of installed stars
     Status,
 
+    /// Sync galaxies and stars
     Sync {
         #[arg(conflicts_with = "full", long)]
         stars: bool,
@@ -73,19 +78,23 @@ enum Commands {
         full: bool,
     },
 
+    /// Show information about a star
     Show {
         name: String,
     },
 
+    /// Search for stars
     Search {
         term: String,
     },
 
+    /// Initialize the cosmos config and universe
     Init {
         #[arg(long)]
         root: Option<String>,
     },
 
+    /// Add a galaxy to the config
     AddGalaxy {
         name: String,
         url: String,
@@ -94,6 +103,7 @@ enum Commands {
         root: Option<String>,
     },
 
+    /// Remove a galaxy from the config
     RemoveGalaxy {
         name: String,
 
@@ -101,6 +111,7 @@ enum Commands {
         root: Option<String>,
     },
 
+    /// List all galaxies in the config
     ListGalaxies {
         #[arg(long)]
         root: Option<String>,
