@@ -105,6 +105,9 @@ pub fn install_star(
     let extracted_files = extract_star(temp_dir.path(), &tarball_path)?;
     let mut installed_files: Vec<String> = vec![];
 
+    star.validate_checksums(temp_dir.path())
+        .map_err(|e| CosmosError::ChecksumFailed(format!("Checksum validation failed: {}", e)))?;
+
     if let Some(script) = &star.install_script {
         let full_script = temp_dir.path().join(script);
 

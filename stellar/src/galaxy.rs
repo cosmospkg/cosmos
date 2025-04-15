@@ -17,7 +17,7 @@ pub fn galaxy_init(name: &str) -> Result<(), Box<dyn std::error::Error>> {
     fs::create_dir_all(dir.join("packages"))?;
 
     //().format("%Y.%m.%d").to_string();
-    let today = chrono::Utc::now().format("%Y-%m-%d").to_string();
+    let today = chrono::Utc::now().format("%Y.%m.%d").to_string();
     let galaxy = GalaxyMeta {
         name: name.to_string(),
         description: Some(String::new()),

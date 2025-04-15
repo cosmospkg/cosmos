@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
 use std::fs::File;
@@ -9,6 +10,8 @@ use fs_extra::copy_items;
 use tempfile::tempdir;
 use fs_extra::dir::CopyOptions;
 use cosmos_core::star::Star;
+use dialoguer::{Input, Select};
+use cosmos_core::resolver::calculate_checksum;
 
 pub fn build_star(path: &str) -> Result<(), Box<dyn std::error::Error>> {
     let dir = Path::new(path);
@@ -20,7 +23,7 @@ pub fn build_star(path: &str) -> Result<(), Box<dyn std::error::Error>> {
     }
 
     let star_str = fs::read_to_string(&star_path)?;
-    let star: Star = toml::from_str(&star_str)?;
+    let mut star: Star = toml::from_str(&star_str)?;
 
     let install_lua = dir.join("install.lua");
     let install_sh = dir.join("install.sh");
@@ -41,6 +44,12 @@ pub fn build_star(path: &str) -> Result<(), Box<dyn std::error::Error>> {
         process::exit(1);
     }
 
+    // ask user if they want to include checksum
+    let include_checksum: bool = Input::new()
+        .with_prompt("🔍 Include checksum?")
+        .default(true)
+        .interact()?;
+
     let temp = tempdir()?;
     let staging = temp.path();
 
@@ -51,9 +60,23 @@ pub fn build_star(path: &str) -> Result<(), Box<dyn std::error::Error>> {
 
     let files_dir = dir.join("files");
     if files_dir.exists() {
+        let mut checksums: HashMap<String, String> = HashMap::new();
+
+        // if the user wants to include checksums, calculate them, save the name as relative path
+        // not full staging path
+
         let entries = fs::read_dir(&files_dir)?
             .map(|res| res.map(|e| e.path()))
             .collect::<Result<Vec<_>, std::io::Error>>()?;
+
+        if include_checksum {
+            for entry in &entries {
+                let relative_path = entry.strip_prefix(&files_dir).unwrap();
+                let checksum = calculate_checksum(entry)?;
+                checksums.insert(relative_path.to_string_lossy().to_string(), checksum);
+            }
+            star.checksums = Some(checksums);
+        }
 
         let mut opts = CopyOptions::new();
         opts.copy_inside = true;

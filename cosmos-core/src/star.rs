@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 use crate::config::Config;
 use crate::error::CosmosError;
 use crate::galaxy::Galaxy;
+use crate::resolver::calculate_checksum;
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Star {
@@ -19,6 +20,7 @@ pub struct Star {
     pub dependencies: Option<HashMap<String, String>>,
     pub install_script: Option<String>,
     pub source: Option<String>,
+    pub checksums: Option<HashMap<String, String>>
 }
 
 impl Star {
@@ -42,6 +44,26 @@ impl Star {
         } else {
             false
         }
+    }
+
+    pub fn validate_checksums(&self, extracted_path: &Path) -> Result<bool, CosmosError> {
+        if let Some(checksums) = &self.checksums {
+            for (file, checksum) in checksums {
+                // we need to insert the files directory into the path
+                // as it is saved relative to the files directory in the star.toml
+                // so that we can calculate the checksum
+
+                let file_path = Path::new(extracted_path).join("files").join(file);
+                if !file_path.exists() {
+                    return Err(CosmosError::FileNotFound(file_path.to_string_lossy().to_string()));
+                }
+                let file_checksum = calculate_checksum(&file_path)?;
+                if file_checksum != *checksum {
+                    return Ok(false);
+                }
+            }
+        }
+        Ok(true)
     }
 }
 

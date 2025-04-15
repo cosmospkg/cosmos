@@ -27,6 +27,12 @@ pub enum CosmosError {
 
     #[error("Failed to copy files: {0}")]
     CopyFailed(String),
+
+    #[error("File not found: {0}")]
+    FileNotFound(String),
+
+    #[error("Checksum validation failed: {0}")]
+    ChecksumFailed(String),
 }
 
 impl From<NovaError> for CosmosError {

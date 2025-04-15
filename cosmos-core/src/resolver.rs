@@ -1,3 +1,4 @@
+use std::path::Path;
 use crate::galaxy::Galaxy;
 use crate::star::Star;
 use semver::{Version, VersionReq};
@@ -29,4 +30,25 @@ pub fn find_star<'a>(
         }
     }
     None
+}
+
+pub fn calculate_checksum(file_path: &Path) -> Result<String, std::io::Error> {
+    use sha2::{Sha256, Digest};
+    use std::fs::File;
+    use std::io::{BufReader, Read};
+
+    let file = File::open(file_path)?;
+    let mut reader = BufReader::new(file);
+    let mut hasher = Sha256::new();
+    let mut buffer = [0; 8192];
+
+    loop {
+        let bytes_read = reader.read(&mut buffer)?;
+        if bytes_read == 0 {
+            break;
+        }
+        hasher.update(&buffer[..bytes_read]);
+    }
+
+    Ok(format!("{:x}", hasher.finalize()))
 }
