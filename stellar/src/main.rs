@@ -31,21 +31,32 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
+    /// Create a new star (interactive)
     NewStar {
         name: String,
     },
+
+    /// Build a star package
     BuildStar {
         path: String,
     },
+
+    /// Fetch a star from a galaxy
     Fetch {
         path: String,
     },
+
+    /// Validate a star package
     Validate {
         path: String,
     },
+
+    /// Initialize a new galaxy
     GalaxyInit {
         name: String,
     },
+
+    /// Update the galaxy index with star definitions
     IndexGalaxy {
         path: String,
     },
