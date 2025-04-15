@@ -1,7 +1,6 @@
 use std::fs;
 use std::path::Path;
 use std::collections::HashMap;
-use chrono::Local;
 use cosmos_core::star::Star;
 use cosmos_core::galaxy::GalaxyMeta;
 use toml;
@@ -17,7 +16,8 @@ pub fn galaxy_init(name: &str) -> Result<(), Box<dyn std::error::Error>> {
     fs::create_dir_all(dir.join("stars"))?;
     fs::create_dir_all(dir.join("packages"))?;
 
-    let today = Local::now().format("%Y.%m.%d").to_string();
+    //().format("%Y.%m.%d").to_string();
+
     let galaxy = GalaxyMeta {
         name: name.to_string(),
         description: Some(String::new()),

@@ -4,12 +4,6 @@ version = "1.0.0-rc2"
 edition = "2021"
 publish = false
 
-[profile.release]
-opt-level = "z"
-lto = true
-panic = "abort"
-strip = true
-
 [dependencies]
 clap = { version = "4.4.11", features = ["derive", "string", "env"] }
 serde = { version = "1.0.193", features = ["derive"] }
@@ -24,4 +18,4 @@ nova = { path = "../nova" }
 ureq = { version = "2", default-features = false }
 semver = "1.0.26"
 cosmos-transport = { path = "../cosmos-transport" }
-chrono = { version = "0.4", default-features = false, features = ["alloc"] }
+chrono = "0.4.40"
