@@ -16,11 +16,13 @@ Cosmos is a statically linked, offline-friendly, interpreter-free package manage
 - Minimal or purpose-built Linux deployments
 - Developers who want reproducible installs without shell drama
 
-- **Galaxy**: A repository of packages
-- **Star**: An individual package
-- **Nebula**: A group of Stars (meta-package)
-- **Constellation**: A preset list of Stars to install
-- **Universe**: Local package database/tracking system
+Terminology:
+
+- [**Galaxy**](https://docs.cosmos-pkg.org/18-Galaxies): A repository of packages
+- [**Star**](https://docs.cosmos-pkg.org/21-Contribution-Guide-for-Maintainers): An individual package
+- [**Nebula**](https://docs.cosmos-pkg.org/04-Nebula-vs-Constellation/#what-is-a-nebula): A group of Stars (meta-package)
+- [**Constellation**](https://docs.cosmos-pkg.org/04-Nebula-vs-Constellation/#what-is-a-constellation): A preset list of Stars to install
+- [**Universe**](https://docs.cosmos-pkg.org/03-File-Formats/#universetoml): Local package database/tracking system
 
 ---
 
