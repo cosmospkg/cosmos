@@ -216,7 +216,7 @@ checksum = "773648b94d0e5d620f64f280777445740e61fe701025087ec8b57f45c791888b"
 
 [[package]]
 name = "cosmos-cli"
-version = "1.0.0-rc"
+version = "1.0.0-rc2"
 dependencies = [
  "clap",
  "cosmos-core",
@@ -225,7 +225,7 @@ dependencies = [
 
 [[package]]
 name = "cosmos-core"
-version = "1.0.0-rc"
+version = "1.0.0-rc2"
 dependencies = [
  "cosmos-transport",
  "cosmos-universe",
@@ -243,7 +243,7 @@ dependencies = [
 
 [[package]]
 name = "cosmos-transport"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "thiserror 2.0.12",
  "ureq",
@@ -251,7 +251,7 @@ dependencies = [
 
 [[package]]
 name = "cosmos-universe"
-version = "1.0.0-rc"
+version = "1.0.0-rc2"
 dependencies = [
  "semver",
  "serde",
@@ -591,7 +591,7 @@ dependencies = [
 
 [[package]]
 name = "nova"
-version = "1.0.0-rc"
+version = "1.0.0-rc2"
 dependencies = [
  "mlua",
 ]
@@ -847,7 +847,7 @@ checksum = "8917285742e9f3e1683f0a9c4e6b57960b7314d0b08d30d1ecd426713ee2eee9"
 
 [[package]]
 name = "stellar"
-version = "1.0.0-rc"
+version = "1.0.0-rc2"
 dependencies = [
  "chrono",
  "clap",

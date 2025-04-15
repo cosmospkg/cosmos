@@ -1,5 +1,10 @@
 # Changelog
 
+## [v1.0.0-rc2] – 2025-04-15
+- Transport layer updated to `v1.0.0`
+- Transport layer modules separated by protocol
+- Better error handling for missing files in the CLI
+
 ## [v1.0.0-rc] – 2025-04-13
 - Initial public release candidate
 - Core package manager (Cosmos) functional

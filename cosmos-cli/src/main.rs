@@ -93,6 +93,18 @@ enum Commands {
         #[arg(long)]
         root: Option<String>,
     },
+
+    RemoveGalaxy {
+        name: String,
+
+        #[arg(long)]
+        root: Option<String>,
+    },
+
+    ListGalaxies {
+        #[arg(long)]
+        root: Option<String>,
+    },
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -100,12 +112,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     match cli.command {
         Commands::Install { name, constellation, offline, root } => {
-            let mut config = Config::from_file("/etc/cosmos/config.toml")?;
-            let mut universe = Universe::load("/var/lib/cosmos/universe.toml")?;
+            let root_path = Path::new(root.as_deref().unwrap_or("/"));
+            let config_path = root_path.join("etc/cosmos/config.toml");
+            let universe_path = root_path.join("var/lib/cosmos/universe.toml");
+            if !config_path.exists() {
+                return Err("❌ Config does not exist at /etc/cosmos/config.toml".into());
+            }
+            let mut config = Config::from_file(config_path.to_str().unwrap())?;
+            let mut universe = Universe::load(universe_path.to_str().unwrap())?;
 
             if let Some(root_override) = &root {
                 config.install_dir = root_override.clone();
-                universe = Universe::load(&format!("{}/var/lib/cosmos/universe.toml", root_override))?;
             }
             let galaxies = cosmos_core::galaxy::Galaxy::load_all_from_config(&config, offline)?;
 
@@ -149,8 +166,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         Commands::Uninstall { name, root } => {
             let root_path = Path::new(root.as_deref().unwrap_or("/"));
             let universe_path = root_path.join("var/lib/cosmos/universe.toml");
-
-            let mut universe = Universe::load(&universe_path)?;
+            let mut universe = Universe::load(universe_path.to_str().unwrap())?;
             uninstall_star(&name, &mut universe, root_path)?;
             universe.save(&universe_path)?;
         }
@@ -179,7 +195,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
 
         Commands::Show { name } => {
-            let config = Config::from_file("/etc/cosmos/config.toml")?;
+            let root_path = Path::new("/");
+            let config_path = root_path.join("etc/cosmos/config.toml");
+            if !config_path.exists() {
+                return Err("❌ Config does not exist at /etc/cosmos/config.toml".into());
+            }
+            let mut config = Config::from_file(config_path.to_str().unwrap())?;
             let galaxies = Galaxy::load_all_from_config(&config, false)?;
             let (star_meta, galaxy) = resolver::find_star(&galaxies, &name, "*")
                 .ok_or_else(|| format!("❌ Star '{}' not found in any Galaxy", name))?;
@@ -205,7 +226,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
 
         Commands::Search { term } => {
-            let config = Config::from_file("/etc/cosmos/config.toml")?;
+            let root_path = Path::new("/");
+            let config_path = root_path.join("etc/cosmos/config.toml");
+            if !config_path.exists() {
+                return Err("❌ Config does not exist at /etc/cosmos/config.toml".into());
+            }
+            let mut config = Config::from_file(config_path.to_str().unwrap())?;
             let galaxies = Galaxy::load_all_from_config(&config, false)?;
 
             println!("🔍 Search results for '{}':", term);
@@ -252,12 +278,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
 
         Commands::Update { name, offline, root } => {
-            let mut config = Config::from_file("/etc/cosmos/config.toml")?;
-            let mut universe = Universe::load("/var/lib/cosmos/universe.toml")?;
+            let root_path = Path::new(root.as_deref().unwrap_or("/"));
+            let config_path = root_path.join("etc/cosmos/config.toml");
+            let universe_path = root_path.join("var/lib/cosmos/universe.toml");
+            if !config_path.exists() {
+                return Err("❌ Config does not exist at /etc/cosmos/config.toml".into());
+            }
+            let mut config = Config::from_file(config_path.to_str().unwrap())?;
+            let mut universe = Universe::load(universe_path.to_str().unwrap())?;
 
             if let Some(root_override) = &root {
                 config.install_dir = root_override.clone();
-                universe = Universe::load(&format!("{}/var/lib/cosmos/universe.toml", root_override))?;
             }
 
             let galaxies = Galaxy::load_all_from_config(&config, offline)?;
@@ -297,6 +328,36 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             println!("🌌 Galaxy '{}' added with URL: {}", name, url);
             println!("⚠️  Run `cosmos sync` to fetch the galaxy data.");
+        }
+
+        Commands::RemoveGalaxy { name, root } => {
+            let root_path = Path::new(root.as_deref().unwrap_or("/"));
+            let config_path = root_path.join("etc/cosmos/config.toml");
+
+            if !config_path.exists() {
+                return Err("❌ Config does not exist at /etc/cosmos/config.toml".into());
+            }
+
+            let mut config = Config::from_file(config_path.to_str().unwrap())?;
+            config.galaxies.remove(&name);
+            config.save(config_path.to_str().unwrap())?;
+
+            println!("🌌 Galaxy '{}' removed.", name);
+        }
+
+        Commands::ListGalaxies { root } => {
+            let root_path = Path::new(root.as_deref().unwrap_or("/"));
+            let config_path = root_path.join("etc/cosmos/config.toml");
+
+            if !config_path.exists() {
+                return Err("❌ Config does not exist at /etc/cosmos/config.toml".into());
+            }
+
+            let config = Config::from_file(config_path.to_str().unwrap())?;
+            println!("🌌 Galaxies:");
+            for (name, url) in &config.galaxies {
+                println!("- {}: {}", name, url);
+            }
         }
     }
 

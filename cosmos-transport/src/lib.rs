@@ -35,7 +35,7 @@ pub fn fetch_bytes(url: &str) -> Result<Vec<u8>, TransportError> {
         "http" => http::pull(url),
         "https" => http::pull(url),
         _ => return Err(TransportError::UnsupportedUrlScheme(url.to_string())),
-    };
+    }?;
 
     Ok(bytes)
 }

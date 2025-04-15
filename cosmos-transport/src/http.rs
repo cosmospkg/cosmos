@@ -1,6 +1,7 @@
 use crate::TransportError;
+use std::io::Read;
 
-pub fn pull(url: &str) -> Vec<u8> {
+pub fn pull(url: &str) -> Result<Vec<u8>, TransportError> {
     let response = ureq::get(&url).call()
         .map_err(|e| TransportError::DownloadFailed(format!("{}: {}", url, e)))?;
 
