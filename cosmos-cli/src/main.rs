@@ -200,7 +200,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             if !config_path.exists() {
                 return Err("❌ Config does not exist at /etc/cosmos/config.toml".into());
             }
-            let mut config = Config::from_file(config_path.to_str().unwrap())?;
+            let config = Config::from_file(config_path.to_str().unwrap())?;
             let galaxies = Galaxy::load_all_from_config(&config, false)?;
             let (star_meta, galaxy) = resolver::find_star(&galaxies, &name, "*")
                 .ok_or_else(|| format!("❌ Star '{}' not found in any Galaxy", name))?;
@@ -231,7 +231,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             if !config_path.exists() {
                 return Err("❌ Config does not exist at /etc/cosmos/config.toml".into());
             }
-            let mut config = Config::from_file(config_path.to_str().unwrap())?;
+            let config = Config::from_file(config_path.to_str().unwrap())?;
             let galaxies = Galaxy::load_all_from_config(&config, false)?;
 
             println!("🔍 Search results for '{}':", term);

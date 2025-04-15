@@ -1,7 +1,6 @@
 mod http;
 
 use thiserror::Error;
-use std::io::Read;
 
 #[derive(Debug, Error)]
 pub enum TransportError {

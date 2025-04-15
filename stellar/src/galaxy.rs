@@ -1,7 +1,6 @@
 use std::fs;
 use std::path::Path;
 use std::collections::HashMap;
-use std::io::Write;
 use chrono::Local;
 use cosmos_core::star::Star;
 use cosmos_core::galaxy::GalaxyMeta;

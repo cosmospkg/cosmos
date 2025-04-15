@@ -1,7 +1,6 @@
 use std::fs;
 use std::path::Path;
 use std::fs::File;
-use std::io::Write;
 use std::process;
 use tar::Builder;
 use flate2::write::GzEncoder;
