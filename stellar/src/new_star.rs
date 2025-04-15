@@ -55,6 +55,7 @@ pub fn new_star(name: &str) -> Result<(), Box<dyn std::error::Error>> {
         source: None,
         license: None,
         authors,
+        checksums: None,
     };
 
     let toml_str = toml::to_string_pretty(&star)?;
