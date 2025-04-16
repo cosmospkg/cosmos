@@ -1,20 +1,16 @@
 use std::path::Path;
 use crate::galaxy::Galaxy;
-use crate::star::Star;
+use crate::star::{compare_versions, Star};
 use semver::{Version, VersionReq};
+use crate::error::CosmosError;
 
-pub fn satisfies_constraint(installed: &str, constraint: &str) -> bool {
-    let version = match Version::parse(installed) {
-        Ok(v) => v,
-        Err(_) => return false,
-    };
-
-    let req = match VersionReq::parse(constraint) {
-        Ok(r) => r,
-        Err(_) => return false,
-    };
-
-    req.matches(&version)
+pub fn satisfies_constraint(installed: &str, constraint: &str) -> Result<bool, CosmosError> {
+    let comparison = compare_versions(installed, constraint)?;
+    match comparison {
+        std::cmp::Ordering::Less => Ok(false),
+        std::cmp::Ordering::Equal => Ok(true),
+        std::cmp::Ordering::Greater => Ok(true),
+    }
 }
 
 pub fn find_star<'a>(
@@ -24,8 +20,15 @@ pub fn find_star<'a>(
 ) -> Option<(&'a Star, &'a Galaxy)> {
     for galaxy in galaxies {
         if let Some(star) = galaxy.get_star(name) {
-            if satisfies_constraint(&star.version, constraint) {
+            // TODO: keep or panic on error?
+            let satisfies = satisfies_constraint(&star.version, constraint);
+            if satisfies.is_ok() && satisfies.unwrap() {
                 return Some((star, galaxy));
+            } else {
+                eprintln!(
+                    "❌ Error: {} does not satisfy the version constraint {} due to parsing error",
+                    star.name, constraint
+                );
             }
         }
     }

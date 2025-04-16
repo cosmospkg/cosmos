@@ -1,7 +1,8 @@
 # Changelog
 
-## [v1.0.0-rc3] – 2025-04-15
+## [v1.0.0-rc3] – 2025-04-16
 - Checksum verification for extracted files
+- Checksum verification for downloaded files (tarballs)
 
 ## [v1.0.0-rc2] – 2025-04-15
 - Transport layer updated to `v1.0.0`

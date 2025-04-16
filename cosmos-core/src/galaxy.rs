@@ -12,15 +12,17 @@ use crate::error::CosmosError;
 pub struct Galaxy {
     pub name: String,
     pub url: Option<String>,
-    pub stars: HashMap<String, Star>,
+    pub stars: HashMap<String, Star>, // name → star
+    pub checksums: Option<HashMap<String, String>>, // name → checksum
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct GalaxyMeta {
     pub name: String,
     pub description: Option<String>,
-    pub version: Option<String>,
+    pub version: Option<String>, // e.g. "2025.01.01"
     pub stars: Option<HashMap<String, String>>, // name → version
+    pub checksums: Option<HashMap<String, String>>, // name → checksum
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -58,6 +60,7 @@ impl Galaxy {
             name: name.to_string(),
             url: Some(url.to_string()),
             stars: HashMap::new(),
+            checksums: None,
         }
     }
 
@@ -190,6 +193,7 @@ impl Galaxy {
             name,
             url,
             stars,
+            checksums: meta.checksums,
         })
     }
 

@@ -8,6 +8,7 @@ use tar::Archive;
 use crate::{star::Star, galaxy::Galaxy, config::Config, universe::record_install, error::CosmosError, resolver};
 
 use cosmos_universe::Universe;
+use crate::resolver::calculate_checksum;
 
 pub fn install_star(
     star: &Star,
@@ -33,7 +34,7 @@ pub fn install_star(
     }
 
     if star.star_type.as_deref() == Some("nebula") || star.star_type.as_deref() == Some("meta") {
-        println!("🌀 Nebula '{}' does not extract files or run scripts", star.name);
+        println!("🌀 Nebula '{}' does not extract files or run scripts. Installation has been logged", star.name);
         record_install(universe, star, vec![]);
         return Ok(());
     }
@@ -99,6 +100,27 @@ pub fn install_star(
                 star.name
             )));
         }
+    }
+
+    // verify checksum of tarball (if applicable)
+    if let Some(checksums) = &origin.checksums {
+        if let Some(expected) = checksums.get(&star.name) {
+            let actual = calculate_checksum(&tarball_path)
+                .map_err(|e| CosmosError::ChecksumFailed(format!("Checksum calculation failed: {}", e)))?;
+
+            if actual != *expected {
+                return Err(CosmosError::ChecksumFailed(format!(
+                    "Checksum mismatch for '{}': expected {}, got {}",
+                    star.name, expected, actual
+                )));
+            } else {
+                println!("🔒 Checksum verified for '{}'", filename);
+            }
+        } else {
+            println!("⚠️ No checksum found for '{}'", filename);
+        }
+    } else {
+        println!("⚠️ No checksum validation for '{}'", filename);
     }
 
     let temp_dir = tempfile::tempdir()?;

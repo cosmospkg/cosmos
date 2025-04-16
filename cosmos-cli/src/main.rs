@@ -34,34 +34,43 @@ struct Cli {
 enum Commands {
     /// Install a star or constellation
     Install {
+        /// Name of the star to install
         #[arg(conflicts_with = "constellation")]
         name: Option<String>,
 
+        /// Path to a constellation file
         #[arg(long)]
         constellation: Option<String>,
 
+        /// Don't connect to remote galaxies (only use cache + local files)
         #[arg(long)]
         offline: bool,
 
+        /// Root directory for installation (default: /)
         #[arg(long)]
         root: Option<String>,
     },
 
     /// Uninstall a star
     Uninstall {
+        /// Name of the star to uninstall
         name: String,
 
+        /// Root directory for uninstallation (default: /)
         #[arg(long)]
         root: Option<String>,
     },
 
     /// Update a star
     Update {
+        /// Name of the star to update
         name: String,
 
+        /// Don't connect to remote galaxies (only use cache + local files)
         #[arg(long)]
         offline: bool,
 
+        /// Root directory for update (default: /)
         #[arg(long)]
         root: Option<String>,
     },
@@ -71,9 +80,11 @@ enum Commands {
 
     /// Sync galaxies and stars
     Sync {
+        /// Sync only stars
         #[arg(conflicts_with = "full", long)]
         stars: bool,
 
+        /// Sync all stars and packages
         #[arg(long)]
         full: bool,
     },

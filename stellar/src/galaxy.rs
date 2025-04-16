@@ -4,6 +4,7 @@ use std::collections::HashMap;
 use cosmos_core::star::Star;
 use cosmos_core::galaxy::GalaxyMeta;
 use toml;
+use cosmos_core::resolver::calculate_checksum;
 
 pub fn galaxy_init(name: &str) -> Result<(), Box<dyn std::error::Error>> {
     let path = format!("{}-galaxy", name);
@@ -16,6 +17,12 @@ pub fn galaxy_init(name: &str) -> Result<(), Box<dyn std::error::Error>> {
     fs::create_dir_all(dir.join("stars"))?;
     fs::create_dir_all(dir.join("packages"))?;
 
+    // prompt for if using checksum, use dialoguer
+    let use_checksum: bool = dialoguer::Confirm::new()
+        .with_prompt("Enable global checksums for star sources?")
+        .default(true)
+        .interact()?;
+
     //().format("%Y.%m.%d").to_string();
     let today = chrono::Utc::now().format("%Y.%m.%d").to_string();
     let galaxy = GalaxyMeta {
@@ -23,6 +30,11 @@ pub fn galaxy_init(name: &str) -> Result<(), Box<dyn std::error::Error>> {
         description: Some(String::new()),
         version: Some(today),
         stars: Some(HashMap::new()),
+        checksums: if use_checksum {
+            Some(HashMap::new())
+        } else {
+            None
+        },
     };
 
     let meta_str = toml::to_string_pretty(&galaxy)?;
@@ -57,8 +69,37 @@ pub fn index_galaxy(path: &str) -> Result<(), Box<dyn std::error::Error>> {
         versions.insert(star.name.clone(), star.version.clone());
     }
 
+    let use_checksum: bool = dialoguer::Confirm::new()
+        .with_prompt("Do you want to run checksum validation?")
+        .default(true)
+        .interact()?;
+
+    let mut checksums: HashMap<String, String> = HashMap::new();
+
+    if use_checksum {
+        let packages_dir = root.join("packages");
+        // use star meta to get checksums of packages
+        for (name, version) in &versions {
+            let package_path = packages_dir.join(format!("{}-{}.tar.gz", name, version));
+            if !package_path.exists() {
+                println!("⚠️  Package {} v{} not found in packages/ directory. Is this a nebulae?", name, version);
+                continue;
+            }
+
+            let checksum = calculate_checksum(&package_path)?;
+            println!("🔒 Validated checksum for {} (v{}): {}", name, version, checksum);
+            checksums.insert(name.to_string(), checksum);
+        }
+    }
+
+
     let mut meta: GalaxyMeta = toml::from_str(&fs::read_to_string(&meta_path)?)?;
     meta.stars = Some(versions);
+    if use_checksum {
+        meta.checksums = Some(checksums);
+    } else {
+        meta.checksums = None;
+    }
 
     let updated = toml::to_string_pretty(&meta)?;
     fs::write(&meta_path, updated)?;
