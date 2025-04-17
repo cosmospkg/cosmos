@@ -1,7 +1,6 @@
 use std::path::Path;
 use crate::galaxy::Galaxy;
 use crate::star::{compare_versions, Star};
-use semver::{Version, VersionReq};
 use crate::error::CosmosError;
 
 pub fn satisfies_constraint(installed: &str, constraint: &str) -> Result<bool, CosmosError> {
@@ -45,6 +44,13 @@ pub fn calculate_checksum(file_path: &Path) -> Result<String, std::io::Error> {
         return Err(std::io::Error::new(
             std::io::ErrorKind::InvalidInput,
             "Provided path is a directory, not a file",
+        ));
+    }
+
+    if !file_path.exists() {
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::NotFound,
+            "File not found",
         ));
     }
 

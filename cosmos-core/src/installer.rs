@@ -5,6 +5,7 @@ use flate2::read::GzDecoder;
 use fs_extra::copy_items;
 use fs_extra::dir::CopyOptions;
 use tar::Archive;
+use cosmos_transport::supports_url;
 use crate::{star::Star, galaxy::Galaxy, config::Config, universe::record_install, error::CosmosError, resolver};
 
 use cosmos_universe::Universe;
@@ -40,6 +41,7 @@ pub fn install_star(
     }
 
     let filename = format!("{}-{}.tar.gz", star.name, star.version);
+
     let mut tarball_path = Path::new(&config.cache_dir)
         .join("galaxies")
         .join(&origin.name)
@@ -47,13 +49,6 @@ pub fn install_star(
         .join(&filename);
 
     if !tarball_path.exists() {
-        if offline {
-            return Err(CosmosError::DownloadFailed(format!(
-                "Missing tarball for '{}' and offline mode is enabled",
-                star.name
-            )));
-        }
-
         if let Some(source) = &star.source {
             let mut resolved_source = source.clone();
 
@@ -65,7 +60,13 @@ pub fn install_star(
                 }
             }
 
-            let resolved = if resolved_source.starts_with("http://") || resolved_source.starts_with("https://") {
+            let resolved = if cosmos_transport::supports_url(&resolved_source) {
+                if offline {
+                    return Err(CosmosError::DownloadFailed(format!(
+                        "Missing tarball for '{}' and offline mode is enabled",
+                        star.name
+                    )));
+                }
                 println!("🌐 Downloading tarball: {}", resolved_source);
                 let response = cosmos_transport::fetch_bytes(&resolved_source)
                     .map_err(|e| CosmosError::DownloadFailed(format!("Failed to download: {}", e)))?;
@@ -104,6 +105,7 @@ pub fn install_star(
 
     // verify checksum of tarball (if applicable)
     if let Some(checksums) = &origin.checksums {
+        println!("🔍 Verifying checksum for '{}'", filename);
         if let Some(expected) = checksums.get(&star.name) {
             let actual = calculate_checksum(&tarball_path)
                 .map_err(|e| CosmosError::ChecksumFailed(format!("Checksum calculation failed: {}", e)))?;
