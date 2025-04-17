@@ -59,7 +59,7 @@ impl Star {
                     return Err(CosmosError::SecurityError(format!("Illegal path: {}", file)));
                 }
                 if !file_path.exists() {
-                    return Err(CosmosError::FileNotFound(file_path.to_string_lossy().to_string()));
+                    return Err(CosmosError::FileNotFound(format!("File not found: {}", file)));
                 }
 
                 // verify that checksum is a valid sha256 hex string
@@ -70,7 +70,9 @@ impl Star {
                     return Err(CosmosError::InvalidChecksum(format!("Invalid checksum: {}", checksum)));
                 }
 
-                let file_checksum = calculate_checksum(&file_path)?;
+                println!("🔍 Verifying checksum for {}: {}", file, checksum);
+                let file_checksum = calculate_checksum(&file_path)
+                    .map_err(|e| CosmosError::ChecksumFailed(format!("Failed to calculate checksum: {}", e)))?;
                 if file_checksum != *checksum {
                     return Ok(false);
                 }
