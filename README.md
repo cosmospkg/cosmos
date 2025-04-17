@@ -4,7 +4,7 @@
 
 **Cosmos is a minimal, musl-friendly, static-binary-only package manager for people who want to build, install, and repair Linux systems with zero runtime dependencies and zero patience for bloat.**
 
-![GitHub Release](https://img.shields.io/github/v/release/cosmospkg/cosmos) [![Build Cosmos](https://github.com/cosmospkg/cosmos/actions/workflows/build.yml/badge.svg)](https://github.com/cosmospkg/cosmos/actions/workflows/build.yml)
+[![GitHub Release](https://img.shields.io/github/v/release/cosmospkg/cosmos)](https://github.com/cosmospkg/cosmos/releases/latest) [![Build Cosmos](https://github.com/cosmospkg/cosmos/actions/workflows/build.yml/badge.svg)](https://github.com/cosmospkg/cosmos/actions/workflows/build.yml)
 
 ---
 
