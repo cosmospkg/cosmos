@@ -54,14 +54,16 @@ impl Star {
                 // so that we can calculate the checksum
 
                 let file_path = Path::new(extracted_path).join("files").join(file);
-                let canonical = file_path.canonicalize()?;
-                if !canonical.starts_with(extracted_path.join("files")) {
-                    return Err(CosmosError::SecurityError(format!("Illegal path: {}", file)));
-                }
                 if !file_path.exists() {
                     eprintln!("❌ File not found: {}", &file_path.display());
                     return Err(CosmosError::FileNotFound(format!("File not found: {}", file)));
                 }
+
+                let canonical = file_path.canonicalize()?;
+                if !canonical.starts_with(extracted_path.join("files")) {
+                    return Err(CosmosError::SecurityError(format!("Illegal path: {}", file)));
+                }
+
 
                 // verify that checksum is a valid sha256 hex string
 

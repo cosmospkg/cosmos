@@ -69,9 +69,6 @@ pub fn build_star(path: &str) -> Result<(), Box<dyn std::error::Error>> {
         let files_dir = dir.join("files");
         let mut checksums: HashMap<String, String> = HashMap::new();
 
-        // if the user wants to include checksums, calculate them, save the name as relative path
-        // not full staging path
-
         let entries = fs::read_dir(&files_dir)?
             .map(|res| res.map(|e| e.path()))
             .collect::<Result<Vec<_>, std::io::Error>>()?;
@@ -91,7 +88,10 @@ pub fn build_star(path: &str) -> Result<(), Box<dyn std::error::Error>> {
         opts.copy_inside = true;
         opts.overwrite = true;
 
-        copy_items(&entries, staging, &opts)?;
+        // PATCHED: copy to staging/files/
+        let staging_files_dir = staging.join("files");
+        fs::create_dir_all(&staging_files_dir)?;
+        copy_items(&entries, &staging_files_dir, &opts)?;
     }
 
     // if files, install.sh, or install.lua exist, source is set as there is a tarball
