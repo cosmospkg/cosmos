@@ -59,6 +59,7 @@ impl Star {
                     return Err(CosmosError::SecurityError(format!("Illegal path: {}", file)));
                 }
                 if !file_path.exists() {
+                    eprintln!("❌ File not found: {}", &file_path.display());
                     return Err(CosmosError::FileNotFound(format!("File not found: {}", file)));
                 }
 

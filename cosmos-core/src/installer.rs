@@ -116,7 +116,7 @@ pub fn install_star(
                     star.name, expected, actual
                 )));
             } else {
-                println!("🔒 Checksum verified for '{}'", filename);
+                println!("🔒 Checksum verified for tarball '{}'", filename);
             }
         } else {
             println!("⚠️ No checksum found for '{}'", filename);
