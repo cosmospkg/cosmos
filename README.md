@@ -17,6 +17,7 @@ Cosmos is a statically linked, offline-friendly, interpreter-free package manage
 - Fully custom distros (like Wombat Linux)
 - Minimal or purpose-built Linux deployments
 - Developers who want reproducible installs without shell drama
+- Those who don't need GPG or TLS for package verification, only checksums
 
 Terminology:
 
