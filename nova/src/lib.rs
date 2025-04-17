@@ -67,7 +67,7 @@ pub fn run_nova_build_script(script_path: &str, extraction_root: &Path, install_
         let install_root = install_root_buf.clone();
         let extract_root = extraction_root_buf.clone();
         lua.create_function_mut(move |_, (from, to): (String, String)| {
-            let full_from = extract_root.join(&from).join("files");
+            let full_from = extract_root.join("files").join(&from);
             let full_to = within_root(&install_root, &to);
             fs::create_dir_all(full_to.parent().unwrap_or_else(|| Path::new("/")))?;
             fs::copy(&full_from, &full_to)?;
@@ -176,7 +176,7 @@ pub fn run_nova_script(
         let installed_files = Rc::clone(&installed);
 
         lua.create_function_mut(move |_, (from, to): (String, String)| {
-            let full_from = extract_root.join(&from).join("files");
+            let full_from = extract_root.join("files").join(&from);
             let full_to = within_root(&install_root, &to);
 
             if !full_from.exists() {
