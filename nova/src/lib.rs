@@ -1,3 +1,7 @@
+mod install_cmd;
+mod build_cmd;
+mod shell_interpreter;
+
 use mlua::{Lua, Function, Error as LuaError};
 use std::fs;
 use std::io;

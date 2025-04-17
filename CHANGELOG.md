@@ -1,8 +1,15 @@
 # Changelog
 
 ## [v1.0.0-rc3] – 2025-04-16
-- Checksum verification for extracted files
-- Checksum verification for downloaded files (tarballs)
+
+- Added **tarball-level checksums** for packages. These are stored in Galaxy repository metadata and are **optional** for repo maintainers.
+- Added **file-level checksums** for internal package contents. These are stored in each `star.toml` and are **optional** for package authors. Validation occurs after extraction.
+- Rewrote downloader logic to use transport capabilities instead of hardcoding protocol checks. Will gracefully error if `--offline` is set and no files are found.
+- Dependency constraint `"*"` now means "first available package from any Galaxy" — useful for flexible installs.
+- `stellar build-star` now creates both a new `star.toml` and a matching `.tar.gz` package. Both are output to the `dist/` directory.
+- `stellar` now supports automatic checksum generation for **extracted files** (during `build-star`) and **tarballs** (during `index-galaxy`).
+- All CLI commands now include help descriptions. Type `--help` with any command to see usage info.
+
 
 ## [v1.0.0-rc2] – 2025-04-15
 - Transport layer updated to `v1.0.0`
