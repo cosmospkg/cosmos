@@ -20,6 +20,9 @@ pub fn find_star<'a>(
     for galaxy in galaxies {
         if let Some(star) = galaxy.get_star(name) {
             // TODO: keep or panic on error?
+            if constraint.is_empty() || constraint == "*" {
+                return Some((star, galaxy));
+            }
             let satisfies = satisfies_constraint(&star.version, constraint);
             if satisfies.is_ok() && satisfies.unwrap() {
                 return Some((star, galaxy));
