@@ -34,21 +34,28 @@ pub fn build_star(path: &str) -> Result<(), Box<dyn std::error::Error>> {
     let install_lua = dir.join("install.lua");
     let install_sh = dir.join("install.sh");
 
+    let mut install_script = star.install_script.clone();
     println!("🔍 Found star definition: {}", star_path.display());
-    if install_lua.exists() {
-        println!("🔍 Found Lua install script: {}", install_lua.display());
-    }
-    if install_sh.exists() {
-        println!("🔍 Found shell install script: {}", install_sh.display());
-    }
-    let files_exists = dir.join("files").exists();
-    if files_exists {
-        println!("📁 Found files directory: {}", dir.join("files").display());
-    }
-
     if install_lua.exists() && install_sh.exists() {
         eprintln!("❌ Error: Both install.lua and install.sh exist. Please use only one.");
         process::exit(1);
+    }
+    if install_lua.exists() {
+        println!("🔍 Found Lua install script: {}", install_lua.display());
+        if install_script.is_none() {
+            install_script = Some("./install.lua".to_string());
+        }
+    }
+    if install_sh.exists() {
+        println!("🔍 Found shell install script: {}", install_sh.display());
+        if install_script.is_none() {
+            install_script = Some("./install.sh".to_string());
+        }
+    }
+
+    let files_exists = dir.join("files").exists();
+    if files_exists {
+        println!("📁 Found files directory: {}", dir.join("files").display());
     }
 
     // ask user if they want to include checksum
@@ -95,7 +102,9 @@ pub fn build_star(path: &str) -> Result<(), Box<dyn std::error::Error>> {
     }
 
     // if files, install.sh, or install.lua exist, source is set as there is a tarball
-    let needs_tarball = files_exists || install_lua.exists() || install_sh.exists();
+    // if is a nebula, tarball not needed
+    let needs_tarball = (star.star_type != Some("nebula".to_string()) && star.star_type == Some("meta".to_string())) &&
+        (files_exists || install_lua.exists() || install_sh.exists());
 
     if needs_tarball {
         star.source = Some(format!("./packages/{}-{}.tar.gz", star.name, star.version));
@@ -110,6 +119,7 @@ pub fn build_star(path: &str) -> Result<(), Box<dyn std::error::Error>> {
         println!("📁 Copying shell script → {}", target.display());
         fs::copy(&install_sh, &target)?;
     }
+    star.install_script = install_script;
 
     if needs_tarball {
         fs::create_dir_all("dist")?;
