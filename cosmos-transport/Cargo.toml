@@ -6,7 +6,8 @@ edition = "2021"
 [features]
 default = ["http"]
 http = ["ureq"]                     # Placeholder for clarity, doesn't change ureq
-https = ["ureq/tls"]          # Enables TLS support via ureq's "rust" feature
+https = ["ureq/tls"]                # Enables TLS support via ureq's "rust" feature
+full = ["http", "https"]
 
 [dependencies]
 thiserror = "2.0.12"

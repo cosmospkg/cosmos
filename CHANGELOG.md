@@ -1,5 +1,7 @@
 # Changelog
 
+## [v1.0.0-rc4] - 2025-04-20
+
 ## [v1.0.0-rc3] – 2025-04-16
 
 - Added **tarball-level checksums** for packages. These are stored in Galaxy repository metadata and are **optional** for repo maintainers.

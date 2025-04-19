@@ -49,7 +49,7 @@ See [Phase 3](https://github.com/cosmospkg/cosmos-docs/tree/main/docs/12-Phase-3
 - [ ] Add `cosmos verify` for file hash checks
 - [ ] `cosmos freeze` lockfile format
 - [ ] `stellar test` to simulate Star installs in temp dirs
-- [ ] Fully replace shell scripting with Nova-only model (Phase 3+)
+- [X] Fully replace shell scripting with Nova-only model (Phase 3+)
 - [ ] Add `record_uninstall()` to `installer.rs` for tracking uninstalls
 - [ ] Grow `nova` with more commands (see [Nova Doc](https://github.com/cosmospkg/cosmos-docs/tree/main/docs/10-Nova.md))
 - [ ] Add `install_script = ["..."]` syntax later as a Nova helper macro, basically convert to a `nova` script

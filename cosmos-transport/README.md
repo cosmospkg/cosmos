@@ -21,6 +21,7 @@ All downloads are assumed to come from trusted sources. The crate does **not** v
 ## ✅ Philosophy
 
 - Transport should be **pluggable**, not baked in
+- `cosmos-core` will no longer verify non-local URLs (`file://`), delegating all networked logic to `cosmos-transport`
 - `cosmos-core` does not link to HTTP libraries directly
 - This crate compiles by default with only basic HTTP support
 - TLS and other advanced transports are opt-in
@@ -46,10 +47,19 @@ supports_url(url: &str) -> bool
 - `http://` (via `ureq`, included by default)
 - `https://` (via `ureq/tls`, opt-in)
 
+### Planned Schemes (roadmap or in-development):
+
+***Please Note***: All the protocols below will be optional and enabled only by feature flags
+
+- IPFS (`ipfs://`)
+- FTP (`ftp://`)
+- Git (`git://`)
+- Onion routing (`.onion` / `tor://`)
+
 ### Explicitly Out-of-Scope:
 
 - `file://` or local paths (handled in `cosmos-core`)
-- Caching or mirror fallback
+- Caching or **local** mirror fallback
 - Retry logic, redirects, or background sync
 
 ---
@@ -81,13 +91,9 @@ This crate empowers Cosmos to operate in constrained, embedded, or auditable env
 
 ## 🔄 Future Plans
 
-- Optional support for:
-  - FTP
-  - IPFS
-  - Onion routing (Tor)
-  - Custom protocols via trait-based plugin system
 - Mirror support with deterministic fallback logic
 - Parallel and range-based downloads (opt-in)
+- Custom protocols via trait-based plugin system
 
 For now? Keep it simple. Fetch the bytes. Pass them up. Let the rest of Cosmos decide what they mean.
 

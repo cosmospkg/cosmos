@@ -5,7 +5,6 @@ use flate2::read::GzDecoder;
 use fs_extra::copy_items;
 use fs_extra::dir::CopyOptions;
 use tar::Archive;
-use cosmos_transport::supports_url;
 use crate::{star::Star, galaxy::Galaxy, config::Config, universe::record_install, error::CosmosError, resolver};
 
 use cosmos_universe::Universe;
