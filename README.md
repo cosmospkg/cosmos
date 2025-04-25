@@ -31,11 +31,13 @@ Terminology:
 
 ## ❓ Why Cosmos?
 
-Because sometimes you don’t want a package manager. You want a surgical tool.
+Cosmos is for real-world failure cases:
+- When your system package manager is broken and can’t install or update anything.
+- When you’re bootstrapping a minimal, embedded, or recovery system without a shell or internet access.
+- When you need to install software from a USB stick, not a cloud mirror.
+- When all you have left is a static binary and sheer force of will.
 
-- Static, small, zero-runtime package installs
-- No shell dependencies or dynamic linking
-- Built for bootstrapping, initramfs, embedded, or minimal distros
+See the Design Rationale for more philosophy and tech comparisons.
 
 See the [Design Rationale](https://github.com/cosmospkg/cosmos-docs/blob/main/docs/14-Design-Rationale.md) for more philosophy and tech comparisons.
 
