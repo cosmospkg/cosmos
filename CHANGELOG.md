@@ -1,6 +1,6 @@
 # Changelog
 
-## [v1.0.0] – 2025-05-01
+## [v1.0.0] – 2025-04-30
 This is the first stable release of Cosmos.
 
 No changes from `v1.0.0-rc3`. All major functionality is considered production-ready.
