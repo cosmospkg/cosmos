@@ -117,7 +117,7 @@ Optional features allow enabling HTTPS and other protocols via the modular `cosm
 
 Cosmos prioritizes simplicity, readability, and explicit trust boundaries.
 
-Read the [Security Model](https://github.com/cosmospkg/cosmos-docs/tree/main/docs/14-Security.md)
+Read the [Security Model](https://github.com/cosmospkg/cosmos-docs/tree/main/docs/15-Security.md)
 
 ---
 
