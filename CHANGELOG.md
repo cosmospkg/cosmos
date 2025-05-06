@@ -1,5 +1,8 @@
 # Changelog
 
+## ## [v1.0.1] – 2025-05-06
+- Fixed bug in Stellar `build_star` command where it required a metapackage to build files
+
 ## [v1.0.0] – 2025-04-30
 This is the first stable release of Cosmos.
 

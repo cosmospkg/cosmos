@@ -235,7 +235,7 @@ checksum = "773648b94d0e5d620f64f280777445740e61fe701025087ec8b57f45c791888b"
 
 [[package]]
 name = "cosmos-cli"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "clap",
  "cosmos-core",
@@ -244,7 +244,7 @@ dependencies = [
 
 [[package]]
 name = "cosmos-core"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "cosmos-transport",
  "cosmos-universe",
@@ -262,7 +262,7 @@ dependencies = [
 
 [[package]]
 name = "cosmos-transport"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "ftp",
  "thiserror 2.0.12",
@@ -271,7 +271,7 @@ dependencies = [
 
 [[package]]
 name = "cosmos-universe"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "semver",
  "serde",
@@ -647,7 +647,7 @@ dependencies = [
 
 [[package]]
 name = "nova"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "mlua",
 ]
@@ -962,7 +962,7 @@ checksum = "8917285742e9f3e1683f0a9c4e6b57960b7314d0b08d30d1ecd426713ee2eee9"
 
 [[package]]
 name = "stellar"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "chrono 0.4.40",
  "clap",
