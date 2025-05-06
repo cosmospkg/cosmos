@@ -1,5 +1,8 @@
 mod http;
 
+#[cfg(feature = "ftp")]
+mod ftp;
+
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -14,12 +17,14 @@ pub enum TransportError {
 
 /// Returns true if the URL is supported by the enabled transport features.
 pub fn supports_url(url: &str) -> bool {
-    if url.starts_with("http://") {
-        cfg!(feature = "http")
-    } else if url.starts_with("https://") {
-        cfg!(feature = "https")
-    } else {
-        false
+    let protocol = url.split("://").next().unwrap_or("");
+    match protocol {
+        "http" => true,
+        #[cfg(feature = "https")]
+        "https" => true,
+        #[cfg(feature = "ftp")]
+        "ftp" => true,
+        _ => false,
     }
 }
 

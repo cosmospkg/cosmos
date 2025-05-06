@@ -103,8 +103,7 @@ pub fn build_star(path: &str) -> Result<(), Box<dyn std::error::Error>> {
 
     // if files, install.sh, or install.lua exist, source is set as there is a tarball
     // if is a nebula, tarball not needed
-    let needs_tarball = (star.star_type != Some("nebula".to_string()) && star.star_type == Some("meta".to_string())) &&
-        (files_exists || install_lua.exists() || install_sh.exists());
+    let needs_tarball = files_exists || install_lua.exists() || install_sh.exists();
 
     if needs_tarball {
         star.source = Some(format!("./packages/{}-{}.tar.gz", star.name, star.version));

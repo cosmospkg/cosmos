@@ -7,8 +7,10 @@ edition = "2021"
 default = ["http"]
 http = ["ureq"]                     # Placeholder for clarity, doesn't change ureq
 https = ["ureq/tls"]                # Enables TLS support via ureq's "rust" feature
+ftp_client = ["ftp"]                # Enables FTP support
 full = ["http", "https"]
 
 [dependencies]
 thiserror = "2.0.12"
 ureq = { version = "2", default-features = false, optional = true }
+ftp = { version = "3.0.1", optional = true }
