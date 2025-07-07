@@ -10,45 +10,53 @@ struct FtpUrl {
 
 fn parse_url(url: &str) -> Result<FtpUrl, crate::TransportError> {
     let url = url.trim_start_matches("ftp://");
-    let parts: Vec<&str> = url.split('/').collect();
 
-    if parts.len() < 2 {
-        return Err(crate::TransportError::UnsupportedUrlScheme(url.to_string()));
-    }
-    let mut host_data = parts[0].split(':');
-    // ftp urli is ftp://[user[:password]@]host[:port]/[url-path]
-    let user_part = parts[0].split('@').next().unwrap_or("");
-    if user_part.is_empty() {
-        host_data = parts[0].split('@').nth(1).unwrap_or("").split(':');
-    }
-    let host = host_data.next().unwrap_or("").to_string();
-    // port is either specified or default to 21 so always parse it with a default value
-    let port = host_data.next().map(|p| p.parse::<u16>().unwrap_or(21));
-    let path = parts[1..].join("/");
-    let username = if user_part.contains('@') {
-        Some(user_part.split(':').next().unwrap_or("").to_string())
-    } else {
-        None
+    // Split into host segment and path segment (requires at least one '/').
+    let (host_segment, path) = match url.split_once('/') {
+        Some((h, p)) if !h.is_empty() && !p.is_empty() => (h, p),
+        _ => {
+            return Err(crate::TransportError::UnsupportedUrlScheme(url.to_string()));
+        }
     };
-    let password = if user_part.contains(':') {
-        Some(user_part.split(':').nth(1).unwrap_or("").to_string())
+
+    // Separate optional user info from host and port.
+    let (userinfo, host_port) = if let Some((u, h)) = host_segment.rsplit_once('@') {
+        (Some(u), h)
     } else {
-        None
+        (None, host_segment)
     };
-    if host.is_empty() {
-        return Err(crate::TransportError::UnsupportedUrlScheme(url.to_string()));
-    }
-    if path.is_empty() {
-        return Err(crate::TransportError::UnsupportedUrlScheme(url.to_string()));
-    }
+
+    // Parse username and password from userinfo, if present.
+    let (username, password) = if let Some(info) = userinfo {
+        let mut parts = info.splitn(2, ':');
+        let user = parts.next().unwrap_or("");
+        let pass = parts.next();
+
+        if user.is_empty() {
+            return Err(crate::TransportError::UnsupportedUrlScheme(url.to_string()));
+        }
+
+        (Some(user.to_string()), pass.map(|p| p.to_string()))
+    } else {
+        (None, None)
+    };
+
     if username.is_none() && password.is_some() {
         return Err(crate::TransportError::UnsupportedUrlScheme(url.to_string()));
     }
 
+    // Parse host and optional port.
+    let mut host_parts = host_port.splitn(2, ':');
+    let host = host_parts.next().unwrap_or("");
+    if host.is_empty() {
+        return Err(crate::TransportError::UnsupportedUrlScheme(url.to_string()));
+    }
+    let port = host_parts.next().map(|p| p.parse::<u16>().unwrap_or(21));
+
     Ok(FtpUrl {
-        host,
+        host: host.to_string(),
         port,
-        path,
+        path: path.to_string(),
         username,
         password,
     })
@@ -89,4 +97,29 @@ pub(crate) fn pull(url: &str) -> Result<Vec<u8>, crate::TransportError> {
         .map_err(|e| crate::TransportError::DownloadFailed(format!("{}: {}", url, e)))?;
     // return bytes
     Ok(bytes)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parse_basic_url() {
+        let url = parse_url("ftp://example.com/file.txt").unwrap();
+        assert_eq!(url.host, "example.com");
+        assert_eq!(url.port, None);
+        assert_eq!(url.path, "file.txt");
+        assert!(url.username.is_none());
+        assert!(url.password.is_none());
+    }
+
+    #[test]
+    fn parse_url_with_auth_and_port() {
+        let url = parse_url("ftp://user:pass@example.com:2121/path/file.tar").unwrap();
+        assert_eq!(url.host, "example.com");
+        assert_eq!(url.port, Some(2121));
+        assert_eq!(url.path, "path/file.tar");
+        assert_eq!(url.username.as_deref(), Some("user"));
+        assert_eq!(url.password.as_deref(), Some("pass"));
+    }
 }
