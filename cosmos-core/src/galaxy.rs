@@ -210,7 +210,7 @@ impl Galaxy {
         cache_dir: &Path,
         level: SyncLevel,
     ) -> Result<(), GalaxyError> {
-        if url.starts_with("https://") {
+        if !cosmos_transport::supports_url(url.clone()) {
             return Err(GalaxyError::UnsupportedUrl(url.to_string()));
         }
 
